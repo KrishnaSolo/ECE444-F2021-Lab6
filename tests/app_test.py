@@ -1,5 +1,4 @@
 import pytest
-import os
 from pathlib import Path
 import json
 
@@ -96,12 +95,17 @@ def populate_db_with_mock_data(client):
     )
     client.post(
         "/add",
-        data=dict(title="Soccer is a 0 sum game", text="In soccer only one team can win"),
+        data=dict(
+            title="Soccer is a 0 sum game", text="In soccer only one team can win"
+        ),
         follow_redirects=True,
     )
     client.post(
         "/add",
-        data=dict(title="How do I do question 1?", text="This question has lots of math and stuff."),
+        data=dict(
+            title="How do I do question 1?",
+            text="This question has lots of math and stuff.",
+        ),
         follow_redirects=True,
     )
 
@@ -115,4 +119,3 @@ def test_search_messages(client):
     assert b"Soccer is a 0 sum game" in rv.data
     assert b"<Hello>" not in rv.data
     assert b"How do I do question 1?" not in rv.data
-
