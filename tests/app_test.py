@@ -82,3 +82,33 @@ def test_delete_message(client):
     data = json.loads(rv.data)
     assert data["status"] == 1
 
+
+def populate_db_with_mock_data(client):
+    login(client, app.config["USERNAME"], app.config["PASSWORD"])
+    client.post(
+        "/add",
+        data=dict(title="<Hello>", text="<strong>HTML</strong> allowed here"),
+        follow_redirects=True,
+    )
+    client.post(
+        "/add",
+        data=dict(title="Soccer is a 0 sum game", text="In soccer only one team can win"),
+        follow_redirects=True,
+    )
+    client.post(
+        "/add",
+        data=dict(title="How do I do question 1?", text="This question has lots of math and stuff."),
+        follow_redirects=True,
+    )
+
+
+def test_search_messages(client):
+    """Ensure search finds the correct message based on query"""
+    populate_db_with_mock_data(client)
+    rv = client.get(
+        "/search/?query=soccer",
+    )
+    assert b"Soccer is a 0 sum game" in rv.data
+    assert b"<Hello>" not in rv.data
+    assert b"How do I do question 1?" not in rv.data
+
